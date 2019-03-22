@@ -70,7 +70,6 @@ public class MySql {
                 e.printStackTrace();
             }
             compte.setIpAllowed(ipAllowed);
-            ipAllowed.clear
         }
         return compte;
     }
