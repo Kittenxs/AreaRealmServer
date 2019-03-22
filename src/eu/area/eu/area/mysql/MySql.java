@@ -24,8 +24,11 @@ public class MySql {
         String name = Main.getConfig().getDb_name();
         String user = Main.getConfig().getDb_user();
         String pass = Main.getConfig().getDb_passord();
-
-        return DriverManager.getConnection("jdbc:mysql://" + host + "/" + name + "?user=" + user + "&password=" + pass +"&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false");
+        //Préferable de gerer l'auto-reconnect toi meme
+        //Parfois tu peux avoir des soucis/bugs qui peuvennt pop sneaky sur ton app qui & ta db est indispo' pour une raison X /Y & quand elle revient par magie tu peux obtenir des resultats plutot inattendu.
+        //C'est pour cette raison que beaucoup gèrent les db commits/rollback eux meme 
+        //Hesite pas si tu need + de détails dessus. Pm Discord sur profile github
+        return DriverManager.getConnection("jdbc:mysql://" + host + "/" + name + "?user=" + user + "&password=" + pass +"&useUnicode=true&characterEncoding=UTF-8&failOverReadOnly=false");
     }
 
     public static Compte getAccountByName(String name) {
@@ -50,6 +53,9 @@ public class MySql {
             List<String> ipAllowed = new ArrayList<String>();
             try {
                 Connection co = createConnection();
+                //Pour ton code de validation, j'suis assez curieux ! Peut il être numerique ?
+                //Admettons que chaque Ips =  222.222.222.222  + Ok
+                //La table peut facilement devenir très lourde sa ferait 16bytes/record !
                 String query = "SELECT * FROM ipProtege WHERE compte = ? AND codeValidation = 'ok';";
                 PreparedStatement ps = co.prepareStatement(query);
                 ps.setInt(1, compte.getGuid());
@@ -64,6 +70,7 @@ public class MySql {
                 e.printStackTrace();
             }
             compte.setIpAllowed(ipAllowed);
+            ipAllowed.clear
         }
         return compte;
     }
